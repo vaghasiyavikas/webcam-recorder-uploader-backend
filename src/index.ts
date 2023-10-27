@@ -2,8 +2,10 @@ require('dotenv').config();
 const express = require('express');
 const multer = require('multer');
 const Minio = require('minio');
+const cors = require('cors');
 
 const app = express();
+app.use(cors());
 
 const minioClient = new Minio.Client({
     endPoint: process.env.S3_ADDRESS,
@@ -22,7 +24,7 @@ app.post('/upload', upload.single('video'), (req, res) => {
     }
 
     const file = req.file.buffer;
-    const fileName = `videos/${Date.now()}-${req.file.originalname}`;
+    const fileName = `videos/${Date.now()}-${req.file.originalname}.webm`;
 
     minioClient.putObject(process.env.S3_BUCKET, fileName, file, (err,) => {
         if (err) {
